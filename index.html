@@ -8,15 +8,17 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
  <link rel="stylesheet" href="style.css">
- <script src="/script.js"></script>
 </head>
 <body>
 
+<!-- Global loading and pointer effects. -->
 <div class="loader"><div class="loader-mark">RS<span>.</span></div></div>
 <div class="progress"></div>
 <div class="cursor"></div><div class="cursor-follower"></div>
 
+<!-- Primary site navigation. -->
 <header class="navbar">
   <a href="#home" class="logo">RS<span>.</span></a>
   <nav class="nav-links">
@@ -32,6 +34,7 @@
 </header>
 
 <main>
+<!-- Introductory hero section. -->
 <section class="hero" id="home">
   <div class="grid-bg"></div>
   <div class="orb orb-a"></div><div class="orb orb-b"></div>
@@ -54,6 +57,7 @@
   <div class="scroll-hint">SCROLL TO EXPLORE <span></span></div>
 </section>
 
+<!-- Personal background and quick facts. -->
 <section class="section" id="about">
   <div class="section-label"><span>01</span> ABOUT ME</div>
   <div class="two-col">
@@ -75,6 +79,7 @@
   </div>
 </section>
 
+<!-- Technical and creative skills. -->
 <section class="section dark-section" id="skills">
   <div class="section-label"><span>02</span> SKILLS</div>
   <div class="reveal"><p class="mini">MY TOOLKIT</p><h2 class="section-title">Code, design & <span>creativity.</span></h2></div>
@@ -86,6 +91,7 @@
   </div>
 </section>
 
+<!-- Selected project portfolio. -->
 <section class="section" id="projects">
   <div class="section-label"><span>03</span> PROJECTS</div>
   <div class="project-heading reveal">
@@ -94,38 +100,62 @@
   </div>
 
   <div class="projects-grid">
-    <article class="project featured reveal">
-      <div class="project-art coffee"><span>01</span><strong>DVicious<br>Brew</strong></div>
-      <div class="project-body"><small>WEB PROJECT</small><h3>DVicious Brew</h3><p>A modern coffee-themed landing page showcasing a premium café experience with smooth animations, clean design and rich visuals.</p><div class="tags"><b>HTML</b><b>CSS</b><b>JavaScript</b></div><div class="project-links"><a href="https://caffee001.netlify.app/" target="_blank" rel="noopener">Live Demo ↗</a><a href="https://github.com/vs-sam007/E-Commerce.git" target="_blank" rel="noopener">GitHub ↗</a></div></div>
+    <!-- Project 01: personal portfolio. -->
+    <article class="project portfolio-project reveal">
+      <div class="project-art portfolio-art">
+        <span>01</span>
+        <div class="project-visual">
+          <div class="visual-logo">RS<span>.</span></div>
+          <div class="visual-line"></div>
+          <div class="visual-text">DEVELOPER × CREATOR</div>
+        </div>
+      </div>
+      <div class="project-body">
+        <small>PERSONAL PROJECT</small>
+        <h3>Rishabh Shukla — Portfolio</h3>
+        <p>My personal developer portfolio designed to showcase my skills, projects, creative work and journey as a Front-End Developer and Content Creator.</p>
+        <div class="tags">
+          <b>HTML</b>
+          <b>CSS</b>
+          <b>JavaScript</b>
+          <b>UI/UX</b>
+        </div>
+        <div class="project-links">
+          <a href="#projects">Live Website ↗</a>
+          <a href="https://github.com/Rishabhsgit06" target="_blank" rel="noopener">GitHub ↗</a>
+        </div>
+      </div>
     </article>
 
-    <article class="project reveal">
-      <div class="project-art portfolio-art"><span>02</span><strong>PORTFOLIO</strong></div>
-      <div class="project-body"><small>WEB PROJECT</small><h3>Portfolio Website</h3><p>Personal portfolio designed to showcase design and coding projects.</p><div class="tags"><b>HTML</b><b>CSS</b><b>Bootstrap</b></div><div class="project-links"><a href="https://new-portfolio001.netlify.app/" target="_blank" rel="noopener">Live Demo ↗</a><a href="https://github.com/vs-sam007/Portfolio-1" target="_blank" rel="noopener">GitHub ↗</a></div></div>
-    </article>
-
-    <article class="project reveal">
-      <div class="project-art iron"><span>03</span><strong>IRON<br>PULSE</strong></div>
-      <div class="project-body"><small>WEB PROJECT</small><h3>Iron Pulse</h3><p>Premium fitness landing page showcasing high-intensity training, coaching and structured membership plans.</p><div class="tags"><b>TypeScript</b><b>CSS</b><b>JS</b></div><div class="project-links"><a href="https://iron-pulse-gymm.netlify.app/" target="_blank" rel="noopener">Live Demo ↗</a><a href="https://github.com/vs-sam007/Fruitables.git" target="_blank" rel="noopener">GitHub ↗</a></div></div>
-    </article>
-
-    <article class="project reveal">
-      <div class="project-art login"><span>04</span><strong>LOGIN<br>FORM</strong></div>
-      <div class="project-body"><small>UI EXPERIMENT</small><h3>Animated Login Form</h3><p>Smooth transitions and effects across inputs, buttons, background and UI elements.</p><div class="tags"><b>HTML</b><b>Tailwind</b><b>JavaScript</b></div><div class="project-links"><a href="https://github.com/vs-sam007/Animated-Login-Page.git" target="_blank" rel="noopener">GitHub ↗</a></div></div>
-    </article>
-
-    <article class="project reveal">
-      <div class="project-art dental"><span>05</span><strong>DENTAL<br>CARE</strong></div>
-      <div class="project-body"><small>WEB PROJECT</small><h3>Dental Care</h3><p>Modern dental care landing page with professional services, treatments, patient-focused care and appointment-focused UX.</p><div class="tags"><b>HTML</b><b>CSS</b><b>JS</b></div><div class="project-links"><a href="https://fluffy-tarsier-90be73.netlify.app/" target="_blank" rel="noopener">Live Demo ↗</a><a href="https://github.com/vs-sam007/Dental-Clinic" target="_blank" rel="noopener">GitHub ↗</a></div></div>
-    </article>
-
-    <article class="project reveal">
-      <div class="project-art homeo"><span>06</span><strong>CLINIC</strong></div>
-      <div class="project-body"><small>WEB PROJECT</small><h3>Homoeopathic Clinic</h3><p>Modern clinic landing page focused on professional services, treatments, trust and clear patient information.</p><div class="tags"><b>HTML</b><b>CSS</b><b>JS</b></div><div class="project-links"><a href="https://glistening-truffle-d70300.netlify.app/" target="_blank" rel="noopener">Live Demo ↗</a><a href="https://github.com/vs-sam007/Homoeopathic-Clinic" target="_blank" rel="noopener">GitHub ↗</a></div></div>
+    <!-- Project 02: Mahadev Jan Kalyan Sewa Trust. -->
+    <article class="project trust-project reveal">
+      <div class="project-art trust-art">
+        <span>02</span>
+        <div class="trust-visual">
+          <div class="trust-symbol">MJKS</div>
+          <div class="trust-name">MAHADEV JAN<br>KALYAN SEWA TRUST</div>
+          <div class="trust-status">CURRENTLY BUILDING</div>
+        </div>
+      </div>
+      <div class="project-body">
+        <small>CURRENT PROJECT</small>
+        <h3>Mahadev Jan Kalyan Sewa Trust</h3>
+        <p>A website project currently under development for Mahadev Jan Kalyan Sewa Trust, focused on creating a professional, accessible and meaningful digital presence for the organisation.</p>
+        <div class="tags">
+          <b>HTML</b>
+          <b>CSS</b>
+          <b>JavaScript</b>
+          <b>UI/UX</b>
+        </div>
+        <div class="project-links">
+          <a href="#projects" class="project-status">In Development ↗</a>
+        </div>
+      </div>
     </article>
   </div>
 </section>
 
+<!-- Services offered. -->
 <section class="section dark-section" id="services">
   <div class="section-label"><span>04</span> SERVICES</div>
   <div class="reveal"><p class="mini">WHAT I DO</p><h2 class="section-title">Ideas into <span>experiences.</span></h2></div>
@@ -137,6 +167,7 @@
   </div>
 </section>
 
+<!-- Contact details and message form. -->
 <section class="section contact" id="contact">
   <div class="section-label"><span>05</span> CONTACT</div>
   <div class="contact-layout">
@@ -161,12 +192,87 @@
 </section>
 </main>
 
+<!-- Footer and external profile links. -->
 <footer>
   <strong>RISHABH<span>.</span></strong>
   <p>Designed & built with curiosity.</p>
   <div><a href="https://github.com/Rishabhsgit06" target="_blank" rel="noopener">GitHub</a><a href="https://www.linkedin.com/in/rishabh-shukla-b0b938376" target="_blank" rel="noopener">LinkedIn</a><a href="https://www.instagram.com/i.rizzzshabh" target="_blank" rel="noopener">Instagram</a></div>
-  <small>© 2026 Rishabh Shukla</small>
+  <small>© <span id="year"></span> Rishabh Shukla</small>
 </footer>
+<!-- AI ASSISTANT -->
+<div class="ai-bot">
+
+    <div class="ai-bubble">
+        <span class="ai-dot"></span>
+        <strong>Hey! I'm Rishabh AI 👀</strong>
+        <small>Ask me anything about Rishabh</small>
+    </div>
+
+    <button class="ai-character" id="aiBotButton" aria-label="Open Rishabh AI">
+
+        <div class="bot-face">
+            <span class="eye left-eye"></span>
+            <span class="eye right-eye"></span>
+            <span class="mouth"></span>
+        </div>
+
+        <span class="bot-name">ASK ME</span>
+
+    </button>
+
+</div>
+
+
+<!-- AI CHAT WINDOW -->
+<div class="ai-chat" id="aiChat">
+
+    <div class="ai-chat-header">
+        <div>
+            <strong>Rishabh AI</strong>
+            <span><i></i> Online</span>
+        </div>
+
+        <button id="closeAi">×</button>
+    </div>
+
+    <div class="ai-messages" id="aiMessages">
+
+        <div class="ai-message bot-message">
+            Hey! 👋 I'm Rishabh's AI assistant.
+            <br><br>
+            You can ask me about his skills, education,
+            projects, experience or anything else you'd
+            like to know.
+        </div>
+
+        <div class="ai-suggestions">
+
+            <button>What are Rishabh's skills?</button>
+
+            <button>Tell me about his education</button>
+
+            <button>What is NEXUS?</button>
+
+            <button>How can I contact him?</button>
+
+        </div>
+
+    </div>
+
+    <form class="ai-input" id="aiForm">
+
+        <input
+            id="aiInput"
+            type="text"
+            placeholder="Ask something..."
+            autocomplete="off"
+        >
+
+        <button type="submit">↗</button>
+
+    </form>
+
+</div>
 
 <script src="script.js"></script>
 </body>

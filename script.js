@@ -1,65 +1,54 @@
 
-alert("JS CONNECTED");
+// EmailJS settings. Replace these values with your EmailJS account details.
+const emailJsPublicKey = "laU9fptRN-JTBVb6g";
+const emailJsServiceId = "service_9tt06lv";
+const emailJsTemplateId = "template_a9kooag";
+const emailJsConfigured = ![
+    emailJsPublicKey,
+    emailJsServiceId,
+    emailJsTemplateId
+].some((value) => value.startsWith("YOUR_"));
+
+if (window.emailjs && emailJsConfigured) {
+    emailjs.init({ publicKey: emailJsPublicKey });
+}
+
+// Hide the loading screen after the initial page animation.
 window.addEventListener("load", () => {
     const loader = document.querySelector(".loader");
 
-    setTimeout(() => {
-        loader.classList.add("hide");
-    }, 700);
-});
-
-
-// ========================================
-// SCROLL PROGRESS
-// ========================================
-
-const progressBar = document.querySelector(".scroll-progress");
-
-window.addEventListener("scroll", () => {
-    const scrollTop = window.scrollY;
-    const height =
-        document.documentElement.scrollHeight -
-        document.documentElement.clientHeight;
-
-    const progress = (scrollTop / height) * 100;
-
-    if (progressBar) {
-        progressBar.style.width = `${progress}%`;
+    if (loader) {
+        setTimeout(() => loader.classList.add("hide"), 700);
     }
 });
 
-
-// ========================================
-// CUSTOM CURSOR
-// ========================================
+// Custom cursor and hover expansion for interactive elements.
 
 const cursor = document.querySelector(".cursor");
-const cursorDot = document.querySelector(".cursor-dot");
+const cursorFollower = document.querySelector(".cursor-follower");
 
-if (cursor && cursorDot) {
+if (cursor && cursorFollower) {
     window.addEventListener("mousemove", (e) => {
-        cursor.style.transform =
-            `translate(${e.clientX}px, ${e.clientY}px)`;
-
-        cursorDot.style.transform =
-            `translate(${e.clientX}px, ${e.clientY}px)`;
+        cursor.style.left = `${e.clientX}px`;
+        cursor.style.top = `${e.clientY}px`;
+        cursorFollower.style.left = `${e.clientX}px`;
+        cursorFollower.style.top = `${e.clientY}px`;
     });
 
-    document.querySelectorAll("a, button, .project-card").forEach((el) => {
+    document.querySelectorAll("a, button, .project").forEach((el) => {
         el.addEventListener("mouseenter", () => {
             cursor.classList.add("cursor-grow");
+            cursorFollower.classList.add("cursor-grow");
         });
 
         el.addEventListener("mouseleave", () => {
             cursor.classList.remove("cursor-grow");
+            cursorFollower.classList.remove("cursor-grow");
         });
     });
 }
 
-
-// ========================================
-// MOBILE NAVIGATION
-// ========================================
+// Toggle the mobile navigation and close it after a link is selected.
 
 const menuBtn = document.querySelector(".menu-btn");
 const navLinks = document.querySelector(".nav-links");
@@ -78,75 +67,69 @@ if (menuBtn && navLinks) {
     });
 }
 
-
-// ========================================
-// NAVBAR SCROLL EFFECT
-// ========================================
-
+// Elements used by the shared scroll-state handler.
 const navbar = document.querySelector(".navbar");
+const progressBar = document.querySelector(".progress");
+const sections = document.querySelectorAll("section[id]");
+const navItems = document.querySelectorAll(".nav-links a");
 
-window.addEventListener("scroll", () => {
-    if (!navbar) return;
+// Keep scroll progress, navbar styling, and the active link in sync.
+function updateScrollState() {
+    const scrollHeight =
+        document.documentElement.scrollHeight -
+        document.documentElement.clientHeight;
+    const progress = scrollHeight > 0
+        ? (window.scrollY / scrollHeight) * 100
+        : 0;
 
-    if (window.scrollY > 50) {
-        navbar.classList.add("scrolled");
-    } else {
-        navbar.classList.remove("scrolled");
+    if (progressBar) {
+        progressBar.style.width = `${progress}%`;
     }
-});
 
+    if (navbar) {
+        navbar.classList.toggle("scrolled", window.scrollY > 50);
+    }
 
-// ========================================
-// SCROLL REVEAL
-// ========================================
+    let currentSection = "";
 
+    sections.forEach((section) => {
+        const sectionTop = section.offsetTop - 150;
+
+        if (window.scrollY >= sectionTop) {
+            currentSection = section.id;
+        }
+    });
+
+    navItems.forEach((link) => {
+        link.classList.toggle(
+            "active",
+            link.getAttribute("href") === `#${currentSection}`
+        );
+    });
+}
+
+window.addEventListener("scroll", updateScrollState);
+updateScrollState();
+
+// Reveal content when it enters the viewport.
 const revealElements = document.querySelectorAll(".reveal");
-
 const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
+    entries.forEach((entry) => {
         if (entry.isIntersecting) {
             entry.target.classList.add("active");
             observer.unobserve(entry.target);
         }
     });
-}, {
-    threshold: 0.05
+}, { threshold: 0.05 });
+
+revealElements.forEach((element) => observer.observe(element));
+document.querySelectorAll(".hero .reveal").forEach((element) => {
+    element.classList.add("active");
 });
 
-revealElements.forEach(el => observer.observe(el));
+// Tilt project cards toward the pointer.
 
-// Show hero immediately
-document.querySelectorAll(".hero .reveal").forEach(el => {
-    el.classList.add("active");
-});
-
-
-// ========================================
-// MAGNETIC BUTTONS
-// ========================================
-
-document.querySelectorAll(".magnetic").forEach((button) => {
-    button.addEventListener("mousemove", (e) => {
-        const rect = button.getBoundingClientRect();
-
-        const x = e.clientX - rect.left - rect.width / 2;
-        const y = e.clientY - rect.top - rect.height / 2;
-
-        button.style.transform =
-            `translate(${x * 0.15}px, ${y * 0.15}px)`;
-    });
-
-    button.addEventListener("mouseleave", () => {
-        button.style.transform = "translate(0, 0)";
-    });
-});
-
-
-// ========================================
-// PROJECT CARD TILT
-// ========================================
-
-document.querySelectorAll(".project-card").forEach((card) => {
+document.querySelectorAll(".project").forEach((card) => {
     card.addEventListener("mousemove", (e) => {
         const rect = card.getBoundingClientRect();
 
@@ -169,33 +152,7 @@ document.querySelectorAll(".project-card").forEach((card) => {
     });
 });
 
-
-// ========================================
-// PARALLAX EFFECT
-// ========================================
-
-const glowOne = document.querySelector(".glow-one");
-const glowTwo = document.querySelector(".glow-two");
-
-window.addEventListener("mousemove", (e) => {
-    const x = (e.clientX / window.innerWidth - 0.5);
-    const y = (e.clientY / window.innerHeight - 0.5);
-
-    if (glowOne) {
-        glowOne.style.transform =
-            `translate(${x * 40}px, ${y * 40}px)`;
-    }
-
-    if (glowTwo) {
-        glowTwo.style.transform =
-            `translate(${x * -30}px, ${y * -30}px)`;
-    }
-});
-
-
-// ========================================
-// SMOOTH SCROLL
-// ========================================
+// Smoothly scroll internal links to their target sections.
 
 document.querySelectorAll('a[href^="#"]').forEach((link) => {
     link.addEventListener("click", (e) => {
@@ -216,32 +173,46 @@ document.querySelectorAll('a[href^="#"]').forEach((link) => {
     });
 });
 
-
-// ========================================
-// CONTACT FORM
-// ========================================
+// Send the contact form through EmailJS or open a pre-filled email draft.
 
 const contactForm = document.querySelector(".contact-form");
+const formStatus = document.querySelector("#form-status");
 
 if (contactForm) {
-    contactForm.addEventListener("submit", (e) => {
+    contactForm.addEventListener("submit", async (e) => {
         e.preventDefault();
 
-        const name = contactForm.querySelector(
-            'input[name="name"]'
-        )?.value.trim();
-
-        const email = contactForm.querySelector(
-            'input[name="email"]'
-        )?.value.trim();
-
-        const message = contactForm.querySelector(
-            'textarea[name="message"]'
-        )?.value.trim();
+        const name = contactForm.elements.name.value.trim();
+        const email = contactForm.elements.email.value.trim();
+        const message = contactForm.elements.message.value.trim();
 
         if (!name || !email || !message) {
-            alert("Please fill all the fields.");
+            if (formStatus) {
+                formStatus.textContent = "Please fill in all fields.";
+            }
             return;
+        }
+
+        if (formStatus) {
+            formStatus.textContent = "Sending message...";
+        }
+
+        if (emailJsConfigured && window.emailjs) {
+            try {
+                await emailjs.sendForm(
+                    emailJsServiceId,
+                    emailJsTemplateId,
+                    contactForm
+                );
+
+                contactForm.reset();
+                if (formStatus) {
+                    formStatus.textContent = "Message sent successfully.";
+                }
+                return;
+            } catch (error) {
+                console.error("EmailJS send failed:", error);
+            }
         }
 
         const subject = encodeURIComponent(
@@ -252,47 +223,16 @@ if (contactForm) {
             `Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`
         );
 
+        if (formStatus) {
+            formStatus.textContent = "Opening your email app...";
+        }
+
         window.location.href =
             `mailto:rishabhshukla9555@gmail.com?subject=${subject}&body=${body}`;
     });
 }
 
-
-// ========================================
-// ACTIVE NAV LINK
-// ========================================
-
-const sections = document.querySelectorAll("section[id]");
-const navItems = document.querySelectorAll(".nav-links a");
-
-window.addEventListener("scroll", () => {
-    let current = "";
-
-    sections.forEach((section) => {
-        const sectionTop = section.offsetTop - 150;
-        const sectionHeight = section.offsetHeight;
-
-        if (
-            window.scrollY >= sectionTop &&
-            window.scrollY < sectionTop + sectionHeight
-        ) {
-            current = section.getAttribute("id");
-        }
-    });
-
-    navItems.forEach((link) => {
-        link.classList.remove("active");
-
-        if (link.getAttribute("href") === `#${current}`) {
-            link.classList.add("active");
-        }
-    });
-});
-
-
-// ========================================
-// CURRENT YEAR
-// ========================================
+// Populate the footer year when a matching element exists.
 
 const year = document.querySelector("#year");
 
@@ -300,14 +240,207 @@ if (year) {
     year.textContent = new Date().getFullYear();
 }
 
-
-// ========================================
-// ESC KEY - CLOSE MOBILE MENU
-// ========================================
-
+// Allow Escape to close the mobile menu.
 document.addEventListener("keydown", (e) => {
     if (e.key === "Escape") {
         navLinks?.classList.remove("active");
         menuBtn?.classList.remove("active");
     }
+});
+/* ================================
+   RISHABH AI CHATBOT
+================================ */
+
+const aiBotButton = document.getElementById("aiBotButton");
+const aiChat = document.getElementById("aiChat");
+const closeAi = document.getElementById("closeAi");
+const aiForm = document.getElementById("aiForm");
+const aiInput = document.getElementById("aiInput");
+const aiMessages = document.getElementById("aiMessages");
+
+if (aiBotButton && aiChat && aiInput) {
+    aiBotButton.addEventListener("click", () => {
+        aiChat.classList.add("open");
+        aiInput.focus();
+    });
+}
+
+if (closeAi && aiChat) {
+    closeAi.addEventListener("click", () => {
+        aiChat.classList.remove("open");
+    });
+}
+
+
+function addAiMessage(text, type){
+
+    const message = document.createElement("div");
+
+    message.className =
+        "ai-message " +
+        (type === "user" ? "user-message" : "bot-message");
+
+    message.innerHTML = text;
+
+    aiMessages.appendChild(message);
+
+    aiMessages.scrollTop = aiMessages.scrollHeight;
+}
+
+function addTypingIndicator(){
+    const typingMessage = document.createElement("div");
+
+    typingMessage.className = "ai-message bot-message typing-message";
+    typingMessage.setAttribute("aria-label", "Rishabh AI is typing");
+    typingMessage.innerHTML = "<span></span><span></span><span></span>";
+
+    aiMessages.appendChild(typingMessage);
+    aiMessages.scrollTop = aiMessages.scrollHeight;
+
+    return typingMessage;
+}
+
+
+/* BASIC KNOWLEDGE BASE */
+
+const rishabhKnowledge = {
+
+    name: "Rishabh Shukla",
+
+    location: "Lucknow, Uttar Pradesh, India",
+
+    education:
+        "Rishabh is a third-year B.Tech Computer Science & Engineering student at BBD NIIT, Lucknow. His B.Tech is from 2024 to 2028.",
+
+    skills:
+        "Rishabh's technical skills include C++, Python, JavaScript, HTML and CSS. He also has hands-on exposure to AI tools.",
+
+    nexus:
+        "Rishabh is the Co-Founder and Tech Lead of NEXUS at BBDNIIT. He helped establish the club with an initial team of 7 active participants and leads technical initiatives and student-focused activities.",
+
+    hackathons:
+        "Rishabh has participated in Chandigarh University Hackathon, Odoo Hackathon and Smart India Hackathon. He was shortlisted in the offline round of Smart India Hackathon at BBDNIIT.",
+
+    coderush:
+        "Rishabh is an Organizer and Team Lead for Coderush, a college-level coding sprint and competition. He has helped organize it for two consecutive years and led a team of 7.",
+
+    contact:
+        "You can contact Rishabh at rishabhshukla9555@gmail.com or through his LinkedIn and GitHub profiles.",
+
+    competencies:
+        "His core competencies include project coordination, team leadership, event management, planning and execution, communication, stakeholder coordination, problem solving and time management."
+
+};
+
+
+function getBotReply(question){
+
+    const q = question.toLowerCase();
+
+    if(q.includes("name") || q.includes("who is"))
+        return `Rishabh's full name is <strong>Rishabh Shukla</strong>. 👋`;
+
+    if(
+        q.includes("where") ||
+        q.includes("city") ||
+        q.includes("from")
+    )
+        return `Rishabh is from <strong>Lucknow, Uttar Pradesh, India</strong>. 📍`;
+
+    if(
+        q.includes("education") ||
+        q.includes("college") ||
+        q.includes("study") ||
+        q.includes("degree")
+    )
+        return rishabhKnowledge.education;
+
+    if(
+        q.includes("skill") ||
+        q.includes("tech") ||
+        q.includes("language") ||
+        q.includes("stack")
+    )
+        return rishabhKnowledge.skills;
+
+    if(q.includes("nexus"))
+        return rishabhKnowledge.nexus;
+
+    if(
+        q.includes("hackathon") ||
+        q.includes("smart india") ||
+        q.includes("siH")
+    )
+        return rishabhKnowledge.hackathons;
+
+    if(
+        q.includes("coderush") ||
+        q.includes("coding sprint")
+    )
+        return rishabhKnowledge.coderush;
+
+    if(
+        q.includes("contact") ||
+        q.includes("email") ||
+        q.includes("linkedin") ||
+        q.includes("github")
+    )
+        return rishabhKnowledge.contact;
+
+    if(
+        q.includes("leadership") ||
+        q.includes("strength") ||
+        q.includes("competenc")
+    )
+        return rishabhKnowledge.competencies;
+
+    return `Hmm 👀 I don't have that information yet. Try asking me about Rishabh's <strong>skills, education, NEXUS, hackathons, Coderush, achievements or contact details.</strong>`;
+}
+
+
+/* FORM */
+
+aiForm.addEventListener("submit", e => {
+
+    e.preventDefault();
+
+    const question = aiInput.value.trim();
+
+    if(!question) return;
+
+    addAiMessage(question, "user");
+
+    aiInput.value = "";
+    const typingIndicator = addTypingIndicator();
+
+    setTimeout(() => {
+        typingIndicator.remove();
+        const answer = getBotReply(question);
+        addAiMessage(answer, "bot");
+
+    }, 600);
+
+});
+
+
+/* QUICK QUESTIONS */
+
+document.querySelectorAll(".ai-suggestions button")
+.forEach(button => {
+
+    button.addEventListener("click", () => {
+
+        const question = button.textContent;
+
+        addAiMessage(question, "user");
+        const typingIndicator = addTypingIndicator();
+
+        setTimeout(() => {
+            typingIndicator.remove();
+            addAiMessage(getBotReply(question), "bot");
+
+        }, 500);
+
+    });
+
 });

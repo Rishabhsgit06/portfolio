@@ -3,12 +3,7 @@
    Premium Dark / Lime Design
 ========================================================= */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap');
-
-
-/* =========================================================
-   VARIABLES
-========================================================= */
+/* Design tokens. Fonts are loaded in index.html. */
 
 :root {
     --bg: #070707;
@@ -46,6 +41,16 @@ body {
     color: var(--text);
     font-family: "Inter", sans-serif;
     overflow-x: hidden;
+}
+
+@media (pointer: fine) {
+    body,
+    a,
+    button,
+    input,
+    textarea {
+        cursor: none;
+    }
 }
 
 a {
@@ -99,6 +104,11 @@ button {
 
 .loader-mark span {
     color: var(--accent);
+}
+
+.loader.hide {
+    opacity: 0;
+    visibility: hidden;
 }
 
 @keyframes loaderPop {
@@ -157,7 +167,7 @@ button {
 
     transform: translate(-50%, -50%);
 
-    z-index: 9998;
+    z-index: 10002;
 }
 
 .cursor {
@@ -166,6 +176,8 @@ button {
     height: 7px;
 
     background: var(--accent);
+
+    transition: width 0.2s ease, height 0.2s ease;
 }
 
 .cursor-follower {
@@ -178,6 +190,16 @@ button {
     transition:
         width 0.2s ease,
         height 0.2s ease;
+}
+
+.cursor.cursor-grow {
+    width: 14px;
+    height: 14px;
+}
+
+.cursor-follower.cursor-grow {
+    width: 50px;
+    height: 50px;
 }
 
 
@@ -857,6 +879,10 @@ button {
 
     padding: 28px;
 
+    position: relative;
+
+    overflow: hidden;
+
     background: #0b0b0b;
 
     transition:
@@ -888,6 +914,75 @@ button {
         sans-serif;
 
     font-size: 22px;
+
+    transition: 0.4s;
+}
+
+/* Skill-card hover accents. */
+
+.skill-card::before {
+
+    content: "";
+    position: absolute;
+
+    width: 180px;
+    height: 180px;
+
+    background: #d8ff3e;
+    border-radius: 50%;
+    filter: blur(100px);
+
+    opacity: 0;
+    top: -100px;
+    right: -80px;
+
+    transition: 0.5s;
+}
+
+.skill-card::after {
+
+    content: "";
+    position: absolute;
+
+    right: 25px;
+    bottom: 25px;
+
+    font: 700 42px "Space Grotesk";
+    color: #d8ff3e;
+
+    opacity: 0;
+    transform: translateY(20px) rotate(-8deg);
+
+    transition: 0.5s;
+}
+
+.skill-card:nth-child(1)::after { content: "JS"; }
+.skill-card:nth-child(2)::after { content: "C++"; }
+.skill-card:nth-child(3)::after { content: "UI/UX"; }
+.skill-card:nth-child(4)::after { content: "CREATE"; }
+
+.skill-card:hover::before {
+    opacity: 0.12;
+}
+
+.skill-card:hover::after {
+    opacity: 1;
+    transform: translateY(0) rotate(-8deg);
+}
+
+.skill-card:hover h3 {
+    color: #d8ff3e;
+    transform: translateX(8px);
+}
+
+.skill-card b {
+    transition: 0.3s;
+}
+
+.skill-card:hover b {
+    color: #d8ff3e;
+    border-color: #d8ff3e;
+    transform: translateY(-3px);
 }
 
 .skill-card div {
@@ -960,6 +1055,8 @@ button {
 
 .project {
 
+    position: relative;
+
     overflow: hidden;
 
     background: var(--surface);
@@ -968,8 +1065,9 @@ button {
         1px solid var(--line);
 
     transition:
-        transform 0.5s ease,
-        border-color 0.5s ease;
+        transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1),
+        border-color 0.4s ease,
+        box-shadow 0.4s ease;
 }
 
 .project:hover {
@@ -979,6 +1077,8 @@ button {
 
     border-color:
         rgba(216,255,62,0.27);
+
+    box-shadow: 0 25px 70px rgba(216,255,62,0.07);
 }
 
 
@@ -1010,6 +1110,44 @@ button {
     place-items: center;
 
     background: #111;
+
+    transition: 0.6s ease;
+}
+
+.project::after {
+    content: "VIEW PROJECT ↗";
+
+    position: absolute;
+    top: 25px;
+    right: 25px;
+
+    padding: 10px 15px;
+
+    border: 1px solid var(--accent);
+    border-radius: 30px;
+
+    color: var(--accent);
+    background: #070707dd;
+
+    font-size: 9px;
+    letter-spacing: 1px;
+
+    opacity: 0;
+    transform: translateY(-15px);
+
+    transition: 0.4s ease;
+    pointer-events: none;
+    backdrop-filter: blur(8px);
+}
+
+.project:hover::after {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.project:hover .project-art {
+    transform: scale(1.03);
+    background-size: 110%;
 }
 
 .project-art span {
@@ -1043,6 +1181,14 @@ button {
     text-align: center;
 
     color: var(--accent);
+
+    transition: 0.5s ease;
+}
+
+.project:hover .project-art strong {
+    color: #fff;
+    transform: scale(1.08);
+    text-shadow: 0 0 30px rgba(216,255,62,0.35);
 }
 
 
@@ -1055,17 +1201,6 @@ button {
             circle at 65% 35%,
             rgba(216,255,62,0.12),
             transparent 35%
-        ),
-        #111;
-}
-
-.portfolio-art {
-
-    background:
-        radial-gradient(
-            circle,
-            rgba(98,85,255,0.15),
-            transparent 50%
         ),
         #111;
 }
@@ -1115,13 +1250,120 @@ button {
         #111;
 }
 
+/* New project artwork. */
 
-/* PROJECT BODY */
-
-.project-body {
-
-    padding: 34px;
+.portfolio-art,
+.trust-art {
+    position: relative;
+    overflow: hidden;
 }
+
+.portfolio-art {
+    background:
+        radial-gradient(
+            circle at 50% 45%,
+            rgba(216,255,62,0.12),
+            transparent 35%
+        ),
+        #0b0b0b;
+}
+
+.trust-art {
+    background:
+        radial-gradient(
+            circle at 50% 45%,
+            rgba(216,255,62,0.08),
+            transparent 38%
+        ),
+        #0b0b0b;
+}
+
+.project-visual,
+.trust-visual {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    transition: 0.5s ease;
+}
+
+.visual-logo {
+    font: 700 90px/0.9 "Space Grotesk", sans-serif;
+    letter-spacing: -7px;
+    color: #f5f5f5;
+}
+
+.visual-logo span {
+    color: var(--accent);
+}
+
+.visual-line {
+    width: 90px;
+    height: 1px;
+    background: var(--accent);
+    margin: 20px auto;
+    transition: 0.5s ease;
+}
+
+.visual-text {
+    font-size: 9px;
+    letter-spacing: 4px;
+    color: #666;
+}
+
+.portfolio-project:hover .project-visual {
+    transform: scale(1.08);
+}
+
+.portfolio-project:hover .visual-line {
+    width: 150px;
+    box-shadow: 0 0 15px var(--accent);
+}
+
+.trust-symbol {
+    width: 95px;
+    height: 95px;
+    display: grid;
+    place-items: center;
+    margin: auto;
+
+    border: 1px solid #d8ff3e66;
+    border-radius: 50%;
+    box-shadow: 0 0 35px rgba(216,255,62,0.08);
+
+    font: 700 22px "Space Grotesk", sans-serif;
+    color: var(--accent);
+    transition: 0.5s ease;
+}
+
+.trust-name {
+    margin-top: 25px;
+    font: 600 18px/1.1 "Space Grotesk", sans-serif;
+    letter-spacing: 1px;
+    color: #ddd;
+}
+
+.trust-status {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 7px 12px;
+
+    border: 1px solid #d8ff3e55;
+    border-radius: 30px;
+
+    font-size: 8px;
+    letter-spacing: 2px;
+    color: var(--accent);
+}
+
+.trust-project:hover .trust-visual {
+    transform: scale(1.05);
+}
+
+.trust-project:hover .trust-symbol {
+    transform: rotate(8deg) scale(1.12);
+    box-shadow: 0 0 50px rgba(216,255,62,0.18);
+}
+
 
 .project-body small {
 
@@ -1207,11 +1449,16 @@ button {
 
     font-size: 10px;
 
-    transition: 0.3s;
+    transition: 0.3s ease;
 }
 
 .project-links a:hover {
     color: var(--accent);
+    border-color: var(--accent);
+}
+
+.project-status {
+    color: var(--accent) !important;
 }
 
 
@@ -1739,7 +1986,7 @@ footer a:hover {
 
 @media (max-width: 900px) {
 
-    .nav-links.open {
+    .nav-links.active {
 
         position: fixed;
 
@@ -1765,145 +2012,402 @@ footer a:hover {
         z-index: 500;
     }
 
-    .nav-links.open a {
+    .nav-links.active a {
 
         font-size: 14px;
 
         color: #999;
     }
 
-    .nav-links.open a:hover {
+    .nav-links.active a:hover {
         color: white;
     }
 }
-.reveal {
-    opacity: 1 !important;
-    transform: none !important;
-}
 /* ================================
-   PREMIUM PROJECT HOVER
+   RISHABH AI - FLOATING CHARACTER
 ================================ */
 
-.project {
-    position: relative;
-    transition: .5s cubic-bezier(.2,.8,.2,1);
+.ai-bot{
+    position:fixed;
+    right:30px;
+    bottom:30px;
+    z-index:9999;
+    display:flex;
+    flex-direction:column;
+    align-items:flex-end;
+    gap:12px;
+    font-family:"Space Grotesk",sans-serif;
 }
 
-.project::after {
-    content: "VIEW PROJECT ↗";
-    position: absolute;
-    top: 25px;
-    right: 25px;
-    padding: 10px 15px;
-    border: 1px solid var(--accent);
-    border-radius: 30px;
-    color: var(--accent);
-    font-size: 9px;
-    letter-spacing: 1px;
-    background: #070707dd;
-    backdrop-filter: blur(8px);
-    opacity: 0;
-    transform: translateY(-15px);
-    transition: .4s ease;
-    pointer-events: none;
+/* speech bubble */
+
+.ai-bubble{
+    width:210px;
+    padding:13px 15px;
+    background:#101010;
+    border:1px solid rgba(216,255,62,.35);
+    border-radius:16px 16px 4px 16px;
+    box-shadow:0 15px 50px rgba(0,0,0,.5);
+    animation:aiBubble 4s ease-in-out infinite;
 }
 
-.project:hover {
-    border-color: #d8ff3e88;
-    box-shadow: 0 25px 70px rgba(216,255,62,.07);
+.ai-bubble strong{
+    display:block;
+    color:#f5f5f5;
+    font-size:12px;
+    margin-bottom:4px;
 }
 
-.project:hover::after {
-    opacity: 1;
-    transform: translateY(0);
+.ai-bubble small{
+    color:#777;
+    font-size:10px;
 }
 
-.project-art {
-    transition: .6s ease;
-}
-
-.project:hover .project-art {
-    transform: scale(1.03);
-}
-
-.project-art strong {
-    transition: .5s ease;
-}
-
-.project:hover .project-art strong {
-    color: #fff;
-    transform: scale(1.08);
-    text-shadow: 0 0 30px rgba(216,255,62,.35);
-}
-
-.project-links a {
-    transition: .3s ease;
-}
-
-.project-links a:hover {
-    color: var(--accent);
-    border-color: var(--accent);
-}
-.skill-card{
-    position:relative;
-    overflow:hidden;
-}
-
-.skill-card::before{
-    content:"";
-    position:absolute;
-    width:180px;
-    height:180px;
+.ai-dot{
+    display:inline-block;
+    width:6px;
+    height:6px;
     background:#d8ff3e;
     border-radius:50%;
-    filter:blur(100px);
-    opacity:0;
-    top:-100px;
-    right:-80px;
-    transition:.5s;
+    margin-right:6px;
+    box-shadow:0 0 10px #d8ff3e;
 }
 
-.skill-card::after{
-    content:"";
+/* character */
+
+.ai-character{
+    width:78px;
+    height:78px;
+    border:1px solid rgba(216,255,62,.5);
+    border-radius:50%;
+    background:#0d0d0d;
+    cursor:pointer;
+    position:relative;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    box-shadow:
+        0 0 0 8px rgba(216,255,62,.03),
+        0 15px 45px rgba(0,0,0,.5);
+    animation:aiFloat 3s ease-in-out infinite;
+    transition:.35s ease;
+}
+
+.ai-character:hover{
+    transform:scale(1.12) rotate(-4deg);
+    border-color:#d8ff3e;
+    box-shadow:
+        0 0 35px rgba(216,255,62,.18),
+        0 20px 60px rgba(0,0,0,.6);
+}
+
+/* face */
+
+.bot-face{
+    width:42px;
+    height:34px;
+    background:#d8ff3e;
+    border-radius:14px;
+    position:relative;
+    box-shadow:0 0 25px rgba(216,255,62,.2);
+}
+
+.eye{
     position:absolute;
-    right:25px;
-    bottom:25px;
-    font:700 42px "Space Grotesk";
+    width:5px;
+    height:7px;
+    background:#070707;
+    border-radius:50%;
+    top:10px;
+}
+
+.left-eye{
+    left:10px;
+}
+
+.right-eye{
+    right:10px;
+}
+
+.mouth{
+    position:absolute;
+    width:13px;
+    height:6px;
+    border-bottom:2px solid #070707;
+    border-radius:0 0 15px 15px;
+    left:50%;
+    bottom:7px;
+    transform:translateX(-50%);
+}
+
+/* little label */
+
+.bot-name{
+    position:absolute;
+    bottom:-8px;
+    right:-5px;
+    padding:4px 7px;
+    background:#070707;
+    border:1px solid rgba(216,255,62,.4);
+    border-radius:8px;
     color:#d8ff3e;
-    opacity:0;
-    transform:translateY(20px) rotate(-8deg);
-    transition:.5s;
+    font-size:7px;
+    font-weight:700;
+    letter-spacing:1px;
 }
 
-.skill-card:nth-child(1)::after{content:"JS";}
-.skill-card:nth-child(2)::after{content:"C++";}
-.skill-card:nth-child(3)::after{content:"UI/UX";}
-.skill-card:nth-child(4)::after{content:"CREATE";}
+/* animations */
 
-.skill-card:hover::before{
-    opacity:.12;
+@keyframes aiFloat{
+
+    0%,100%{
+        transform:translateY(0);
+    }
+
+    50%{
+        transform:translateY(-9px);
+    }
+
 }
 
-.skill-card:hover::after{
-    opacity:1;
-    transform:translateY(0) rotate(-8deg);
+@keyframes aiBubble{
+
+    0%,100%{
+        transform:translateY(0);
+    }
+
+    50%{
+        transform:translateY(-4px);
+    }
+
 }
 
-.skill-card:hover h3{
-    color:#d8ff3e;
-    transform:translateX(8px);
+
+/* ================================
+   CHAT WINDOW
+================================ */
+
+.ai-chat{
+    position:fixed;
+    right:30px;
+    bottom:125px;
+    width:370px;
+    height:520px;
+    background:#0b0b0b;
+    border:1px solid rgba(216,255,62,.25);
+    border-radius:22px;
+    z-index:10000;
+    display:none;
+    flex-direction:column;
+    overflow:hidden;
+    box-shadow:0 30px 100px rgba(0,0,0,.7);
 }
 
-.skill-card h3{
-    transition:.4s;
+.ai-chat.open{
+    display:flex;
+    animation:chatOpen .35s ease;
 }
 
-.skill-card b{
-    transition:.3s;
+@keyframes chatOpen{
+
+    from{
+        opacity:0;
+        transform:translateY(20px) scale(.96);
+    }
+
+    to{
+        opacity:1;
+        transform:none;
+    }
+
 }
 
-.skill-card:hover b{
+
+/* header */
+
+.ai-chat-header{
+    padding:18px 20px;
+    border-bottom:1px solid rgba(255,255,255,.08);
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.ai-chat-header strong{
+    display:block;
+    color:#fff;
+    font-size:15px;
+}
+
+.ai-chat-header span{
+    color:#666;
+    font-size:10px;
+}
+
+.ai-chat-header i{
+    display:inline-block;
+    width:6px;
+    height:6px;
+    background:#d8ff3e;
+    border-radius:50%;
+    margin-right:4px;
+}
+
+.ai-chat-header button{
+    border:0;
+    background:none;
+    color:#777;
+    font-size:25px;
+    cursor:pointer;
+}
+
+
+/* messages */
+
+.ai-messages{
+    flex:1;
+    padding:20px;
+    overflow-y:auto;
+}
+
+.ai-message{
+    max-width:85%;
+    padding:13px 15px;
+    border-radius:14px;
+    font-size:12px;
+    line-height:1.6;
+}
+
+.bot-message{
+    background:#151515;
+    border:1px solid rgba(255,255,255,.06);
+    color:#bbb;
+}
+
+.user-message{
+    margin:12px 0 0 auto;
+    background:#d8ff3e;
+    color:#070707;
+}
+
+.typing-message {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    width: fit-content;
+    min-height: 38px;
+}
+
+.typing-message span {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #d8ff3e;
+    animation: typingBounce 1s infinite ease-in-out;
+}
+
+.typing-message span:nth-child(2) {
+    animation-delay: 0.15s;
+}
+
+.typing-message span:nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+@keyframes typingBounce {
+    0%,
+    60%,
+    100% {
+        opacity: 0.35;
+        transform: translateY(0);
+    }
+
+    30% {
+        opacity: 1;
+        transform: translateY(-4px);
+    }
+}
+
+
+/* suggestions */
+
+.ai-suggestions{
+    display:flex;
+    flex-wrap:wrap;
+    gap:7px;
+    margin-top:15px;
+}
+
+.ai-suggestions button{
+    padding:8px 10px;
+    background:transparent;
+    border:1px solid rgba(216,255,62,.25);
+    color:#aaa;
+    border-radius:20px;
+    font-size:9px;
+    cursor:pointer;
+    transition:.25s;
+}
+
+.ai-suggestions button:hover{
     color:#d8ff3e;
     border-color:#d8ff3e;
-    transform:translateY(-3px);
+}
+
+
+/* input */
+
+.ai-input{
+    display:flex;
+    gap:8px;
+    padding:14px;
+    border-top:1px solid rgba(255,255,255,.08);
+}
+
+.ai-input input{
+    flex:1;
+    background:#151515;
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:12px;
+    padding:12px;
+    color:#fff;
+    outline:none;
+}
+
+.ai-input input:focus{
+    border-color:rgba(216,255,62,.4);
+}
+
+.ai-input button{
+    width:44px;
+    border:0;
+    border-radius:12px;
+    background:#d8ff3e;
+    color:#070707;
+    font-size:18px;
+    cursor:pointer;
+}
+
+
+/* mobile */
+
+@media(max-width:600px){
+
+    .ai-bot{
+        right:16px;
+        bottom:18px;
+    }
+
+    .ai-bubble{
+        display:none;
+    }
+
+    .ai-chat{
+        left:12px;
+        right:12px;
+        bottom:105px;
+        width:auto;
+        height:70vh;
+    }
+
 }
