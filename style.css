@@ -2182,6 +2182,79 @@ footer a:hover {
 
 }
 
+/* playful dodge bot */
+
+.ai-bot{
+    transition:
+        left .9s cubic-bezier(.16,1,.3,1),
+        right .9s cubic-bezier(.16,1,.3,1),
+        top .9s cubic-bezier(.16,1,.3,1),
+        bottom .9s cubic-bezier(.16,1,.3,1);
+}
+
+.ai-character.dodging{
+    animation:aiDodgeFlow .9s ease-in-out;
+}
+
+.ai-character.dodging .bot-face{
+    transform:scaleX(.92);
+}
+
+.ai-character.dodging .mouth{
+    width:15px;
+    height:2px;
+    border-bottom:3px solid #070707;
+    border-radius:0;
+}
+
+.ai-character.caught{
+    animation:none;
+    transform:scale(1.12);
+}
+
+.ai-character.caught .mouth{
+    width:16px;
+    height:8px;
+    border-bottom:3px solid #070707;
+    border-radius:0 0 20px 20px;
+}
+
+.ai-bubble.dodge-message{
+    animation:popMessage .3s ease;
+}
+
+@keyframes aiDodgeFlow{
+
+    0%{
+        transform:scale(1) rotate(0);
+    }
+
+    35%{
+        transform:scale(1.06) rotate(-7deg);
+    }
+
+    70%{
+        transform:scale(1.03) rotate(5deg);
+    }
+
+    100%{
+        transform:scale(1) rotate(0);
+    }
+}
+
+@keyframes popMessage{
+
+    0%{
+        opacity:0;
+        transform:scale(.8) translateY(8px);
+    }
+
+    100%{
+        opacity:1;
+        transform:scale(1) translateY(0);
+    }
+}
+
 
 /* ================================
    CHAT WINDOW
@@ -2268,6 +2341,9 @@ footer a:hover {
     flex:1;
     padding:20px;
     overflow-y:auto;
+    display:flex;
+    flex-direction:column;
+    gap:12px;
 }
 
 .ai-message{
@@ -2279,13 +2355,14 @@ footer a:hover {
 }
 
 .bot-message{
+    margin:0 auto 0 0;
     background:#151515;
     border:1px solid rgba(255,255,255,.06);
     color:#bbb;
 }
 
 .user-message{
-    margin:12px 0 0 auto;
+    margin:0 0 0 auto;
     background:#d8ff3e;
     color:#070707;
 }

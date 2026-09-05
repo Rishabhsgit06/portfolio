@@ -258,16 +258,192 @@ const aiForm = document.getElementById("aiForm");
 const aiInput = document.getElementById("aiInput");
 const aiMessages = document.getElementById("aiMessages");
 
-if (aiBotButton && aiChat && aiInput) {
+const botInteraction = {
+    clickCount: 0,
+    isMoving: false,
+    originalPosition: null,
+    lastDodgePosition: null
+};
+
+const botMoveDuration = 900;
+
+function setBotBubble(title, message){
+    const bubble = document.querySelector(".ai-bubble");
+
+    if (!bubble) return;
+
+    bubble.innerHTML =
+        '<span class="ai-dot"></span>' +
+        `<strong>${title}</strong>` +
+        `<small>${message}</small>`;
+
+    bubble.classList.remove("dodge-message");
+    void bubble.offsetWidth;
+    bubble.classList.add("dodge-message");
+}
+
+function getSafeBotTarget(currentPosition, dodgeNumber){
+    const margin = window.innerWidth <= 600 ? 20 : 28;
+    const maxLeft = Math.max(
+        margin,
+        window.innerWidth - currentPosition.width - margin
+    );
+    const maxTop = Math.max(
+        margin,
+        window.innerHeight - currentPosition.height - margin
+    );
+    const maxTravel = window.innerWidth <= 600 ? 70 : 120;
+    const minimumDistance = window.innerWidth <= 600 ? 35 : 60;
+    const previousPosition = {
+        left: currentPosition.left,
+        top: currentPosition.top
+    };
+
+    for (let attempt = 0; attempt < 12; attempt++) {
+        const angle = Math.random() * Math.PI * 2;
+        const distance = maxTravel * (.7 + Math.random() * .3);
+        const target = {
+            left: Math.min(
+                maxLeft,
+                Math.max(margin, previousPosition.left + Math.cos(angle) * distance)
+            ),
+            top: Math.min(
+                maxTop,
+                Math.max(margin, previousPosition.top + Math.sin(angle) * distance)
+            )
+        };
+
+        const movedEnough = Math.hypot(
+            target.left - previousPosition.left,
+            target.top - previousPosition.top
+        ) >= minimumDistance;
+        const differentFromFirstDodge = dodgeNumber === 1 ||
+            !botInteraction.lastDodgePosition ||
+            Math.hypot(
+                target.left - botInteraction.lastDodgePosition.left,
+                target.top - botInteraction.lastDodgePosition.top
+            ) >= minimumDistance;
+
+        if (movedEnough && differentFromFirstDodge) {
+            return target;
+        }
+    }
+
+    return {
+        left: Math.min(maxLeft, Math.max(margin, previousPosition.left + maxTravel)),
+        top: Math.min(maxTop, Math.max(margin, previousPosition.top))
+    };
+}
+
+function moveBotTo(target, onComplete){
+    const bot = document.querySelector(".ai-bot");
+    const character = document.querySelector(".ai-character");
+
+    if (!bot || !character) return;
+
+    bot.style.position = "fixed";
+    bot.style.right = "auto";
+    bot.style.bottom = "auto";
+    bot.style.left = `${target.left}px`;
+    bot.style.top = `${target.top}px`;
+
+    botInteraction.isMoving = true;
+    character.classList.remove("caught");
+    character.classList.add("dodging");
+
+    window.setTimeout(() => {
+        character.classList.remove("dodging");
+        botInteraction.isMoving = false;
+
+        if (onComplete) {
+            onComplete();
+        }
+    }, botMoveDuration);
+}
+
+function dodgeBot(){
+    const bot = document.querySelector(".ai-bot");
+
+    if (!bot) return;
+
+    const currentPosition = bot.getBoundingClientRect();
+    const target = getSafeBotTarget(
+        currentPosition,
+        botInteraction.clickCount
+    );
+
+    botInteraction.lastDodgePosition = target;
+    moveBotTo(target);
+}
+
+function openAiChat(){
+    aiChat.classList.add("open");
+    aiInput.focus();
+
+    const firstMessage = aiMessages.querySelector(".bot-message");
+
+    if (firstMessage) {
+        firstMessage.innerHTML =
+            "😂 <strong>Nice reflex!</strong><br><br>" +
+            "Okay, you got me. What would you like to know about Rishabh?";
+        firstMessage.classList.add("dodge-message");
+    }
+
+    botInteraction.clickCount = 0;
+    botInteraction.originalPosition = null;
+    botInteraction.lastDodgePosition = null;
+}
+
+if (aiBotButton && aiChat && aiInput && aiMessages) {
+    // Clicks 1 and 2 dodge; click 3 returns home before opening chat.
     aiBotButton.addEventListener("click", () => {
-        aiChat.classList.add("open");
-        aiInput.focus();
+        if (botInteraction.isMoving) return;
+
+        const bot = document.querySelector(".ai-bot");
+
+        if (!bot) return;
+
+        if (botInteraction.clickCount === 0) {
+            const originalPosition = bot.getBoundingClientRect();
+
+            botInteraction.originalPosition = {
+                left: originalPosition.left,
+                top: originalPosition.top
+            };
+        }
+
+        botInteraction.clickCount += 1;
+
+        if (botInteraction.clickCount < 3) {
+            setBotBubble(
+                botInteraction.clickCount === 1 ? "Hehe... too slow 👀" : "Again?! 😂",
+                botInteraction.clickCount === 1 ? "Try again..." : "Almost got me 👀"
+            );
+            dodgeBot();
+            return;
+        }
+
+        setBotBubble("Okay okay 😂", "You caught me!");
+        moveBotTo(botInteraction.originalPosition, openAiChat);
     });
 }
 
 if (closeAi && aiChat) {
     closeAi.addEventListener("click", () => {
         aiChat.classList.remove("open");
+        botInteraction.clickCount = 0;
+        botInteraction.originalPosition = null;
+        botInteraction.lastDodgePosition = null;
+
+        const bot = document.querySelector(".ai-bot");
+
+        if (bot) {
+            bot.style.position = "";
+            bot.style.left = "";
+            bot.style.top = "";
+            bot.style.right = "";
+            bot.style.bottom = "";
+        }
     });
 }
 
