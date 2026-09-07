@@ -72,6 +72,8 @@ const navbar = document.querySelector(".navbar");
 const progressBar = document.querySelector(".progress");
 const sections = document.querySelectorAll("section[id]");
 const navItems = document.querySelectorAll(".nav-links a");
+const heroOrbs = document.querySelectorAll(".hero .orb");
+const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 // Keep scroll progress, navbar styling, and the active link in sync.
 function updateScrollState() {
@@ -88,6 +90,14 @@ function updateScrollState() {
 
     if (navbar) {
         navbar.classList.toggle("scrolled", window.scrollY > 50);
+    }
+
+    if (!reduceMotion) {
+        heroOrbs.forEach((orb, index) => {
+            const direction = index % 2 === 0 ? 1 : -1;
+            const offset = Math.min(window.scrollY * 0.12, 120) * direction;
+            orb.style.transform = `translate3d(0, ${offset}px, 0)`;
+        });
     }
 
     let currentSection = "";
