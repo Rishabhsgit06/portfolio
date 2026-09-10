@@ -20,6 +20,7 @@ window.addEventListener("load", () => {
     if (loader) {
         setTimeout(() => loader.classList.add("hide"), 700);
     }
+
 });
 
 // Custom cursor and hover expansion for interactive elements.
@@ -183,7 +184,7 @@ document.querySelectorAll('a[href^="#"]').forEach((link) => {
     });
 });
 
-// Send the contact form through EmailJS or open a pre-filled email draft.
+// Send the contact form directly through EmailJS.
 
 const contactForm = document.querySelector(".contact-form");
 const formStatus = document.querySelector("#form-status");
@@ -222,23 +223,19 @@ if (contactForm) {
                 return;
             } catch (error) {
                 console.error("EmailJS send failed:", error);
+                if (formStatus) {
+                    formStatus.textContent =
+                        "Unable to send right now. Please try again later.";
+                }
             }
+
+            return;
         }
-
-        const subject = encodeURIComponent(
-            `Portfolio Contact from ${name}`
-        );
-
-        const body = encodeURIComponent(
-            `Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`
-        );
 
         if (formStatus) {
-            formStatus.textContent = "Opening your email app...";
+            formStatus.textContent =
+                "Message service is unavailable. Please try again later.";
         }
-
-        window.location.href =
-            `mailto:rishabhshukla9555@gmail.com?subject=${subject}&body=${body}`;
     });
 }
 
