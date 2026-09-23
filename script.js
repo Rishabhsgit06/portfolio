@@ -13,6 +13,122 @@ if (window.emailjs && emailJsConfigured) {
     emailjs.init({ publicKey: emailJsPublicKey });
 }
 
+// Subtle cursor response for the fixed-pose hero portrait.
+const avatarWrap = document.querySelector(".avatar-wrap");
+const avatarImage = document.querySelector("#heroAvatar");
+const avatarMotion = {
+    x: 0,
+    y: 0,
+    targetX: 0,
+    targetY: 0
+};
+
+function animateAvatarMotion() {
+    avatarMotion.x += (avatarMotion.targetX - avatarMotion.x) * 0.055;
+    avatarMotion.y += (avatarMotion.targetY - avatarMotion.y) * 0.055;
+
+    if (avatarWrap) {
+        avatarWrap.style.setProperty("--avatar-x", `${avatarMotion.x * 8}px`);
+        avatarWrap.style.setProperty("--avatar-y", `${avatarMotion.y * 6}px`);
+        avatarWrap.style.setProperty("--avatar-tilt-y", `${avatarMotion.x * 1.6}deg`);
+        avatarWrap.style.setProperty("--avatar-tilt-x", `${avatarMotion.y * -1.1}deg`);
+    }
+
+    if (avatarImage) {
+        avatarImage.style.setProperty("--portrait-tilt-y", `${avatarMotion.x * 1.2}deg`);
+        avatarImage.style.setProperty("--portrait-tilt-x", `${avatarMotion.y * -0.8}deg`);
+    }
+
+    requestAnimationFrame(animateAvatarMotion);
+}
+
+if (avatarWrap) {
+    animateAvatarMotion();
+}
+
+// Keep the public LeetCode summary current without blocking the rest of the page.
+const leetcodeUsername = "IBqtMsBL2S";
+const leetcodeStatsEndpoint = `https://leetcode-api-faisalshohag.vercel.app/${leetcodeUsername}`;
+const leetcodeElements = {
+    wheel: document.querySelector("#leetcodeWheel"),
+    solved: document.querySelector("#leetcodeSolved"),
+    total: document.querySelector("#leetcodeTotal"),
+    easy: document.querySelector("#leetcodeEasy"),
+    easyTotal: document.querySelector("#leetcodeEasyTotal"),
+    medium: document.querySelector("#leetcodeMedium"),
+    mediumTotal: document.querySelector("#leetcodeMediumTotal"),
+    hard: document.querySelector("#leetcodeHard"),
+    hardTotal: document.querySelector("#leetcodeHardTotal")
+};
+
+function getNumber(value) {
+    return Number.isFinite(Number(value)) ? Number(value) : 0;
+}
+
+function setLeetCodeText(element, value) {
+    if (element) {
+        element.textContent = value;
+    }
+}
+
+function renderLeetCodeStats(data) {
+    const solved = getNumber(data.totalSolved);
+    const total = getNumber(data.totalQuestions);
+    const easy = getNumber(data.easySolved);
+    const easyTotal = getNumber(data.totalEasy);
+    const medium = getNumber(data.mediumSolved);
+    const mediumTotal = getNumber(data.totalMedium);
+    const hard = getNumber(data.hardSolved);
+    const hardTotal = getNumber(data.totalHard);
+    const easyFill = easyTotal > 0 ? Math.min(easy / easyTotal, 1) * 118 : 0;
+    const mediumFill = 122 + (mediumTotal > 0 ? Math.min(medium / mediumTotal, 1) * 116 : 0);
+    const hardFill = 242 + (hardTotal > 0 ? Math.min(hard / hardTotal, 1) * 116 : 0);
+
+    if (leetcodeElements.wheel) {
+        leetcodeElements.wheel.style.setProperty("--leetcode-easy-fill", `${easyFill}deg`);
+        leetcodeElements.wheel.style.setProperty("--leetcode-medium-fill", `${mediumFill}deg`);
+        leetcodeElements.wheel.style.setProperty("--leetcode-hard-fill", `${hardFill}deg`);
+    }
+
+    setLeetCodeText(leetcodeElements.solved, solved || "0");
+    setLeetCodeText(leetcodeElements.total, total || "--");
+    setLeetCodeText(leetcodeElements.easy, easy || "0");
+    setLeetCodeText(leetcodeElements.easyTotal, `${easyTotal || "--"} total · ${easyTotal ? ((easy / easyTotal) * 100).toFixed(1) : "0.0"}%`);
+    setLeetCodeText(leetcodeElements.medium, medium || "0");
+    setLeetCodeText(leetcodeElements.mediumTotal, `${mediumTotal || "--"} total · ${mediumTotal ? ((medium / mediumTotal) * 100).toFixed(1) : "0.0"}%`);
+    setLeetCodeText(leetcodeElements.hard, hard || "0");
+    setLeetCodeText(leetcodeElements.hardTotal, `${hardTotal || "--"} total · ${hardTotal ? ((hard / hardTotal) * 100).toFixed(1) : "0.0"}%`);
+}
+
+async function syncLeetCodeStats() {
+    if (!leetcodeElements.wheel) return;
+
+    try {
+        const response = await fetch(leetcodeStatsEndpoint, {
+            headers: { Accept: "application/json" }
+        });
+
+        if (!response.ok) {
+            throw new Error(`LeetCode stats request failed: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        if (data.status === "error") {
+            throw new Error(data.message || "LeetCode stats are unavailable.");
+        }
+
+        renderLeetCodeStats(data);
+    } catch (error) {
+        console.warn("LeetCode stats sync unavailable:", error.message);
+    }
+}
+
+if (leetcodeElements.wheel) {
+    syncLeetCodeStats();
+    window.setInterval(syncLeetCodeStats, 15 * 60 * 1000);
+}
+
 // Hide the loading screen after the initial page animation.
 window.addEventListener("load", () => {
     const loader = document.querySelector(".loader");
@@ -34,6 +150,14 @@ if (cursor && cursorFollower) {
         cursor.style.top = `${e.clientY}px`;
         cursorFollower.style.left = `${e.clientX}px`;
         cursorFollower.style.top = `${e.clientY}px`;
+
+        avatarMotion.targetX = (e.clientX / window.innerWidth) * 2 - 1;
+        avatarMotion.targetY = (e.clientY / window.innerHeight) * 2 - 1;
+    });
+
+    window.addEventListener("mouseleave", () => {
+        avatarMotion.targetX = 0;
+        avatarMotion.targetY = 0;
     });
 
     document.querySelectorAll("a, button, .project").forEach((el) => {
@@ -391,8 +515,8 @@ function openAiChat(){
 
     if (firstMessage) {
         firstMessage.innerHTML =
-            "😂 <strong>Nice reflex!</strong><br><br>" +
-            "Okay, you got me. What would you like to know about Rishabh?";
+            "😂 <strong>Excellent reflexes.</strong><br><br>" +
+            "You caught me. What would you like to discover about Rishabh?";
         firstMessage.classList.add("dodge-message");
     }
 
@@ -423,14 +547,14 @@ if (aiBotButton && aiChat && aiInput && aiMessages) {
 
         if (botInteraction.clickCount < 3) {
             setBotBubble(
-                botInteraction.clickCount === 1 ? "Hehe... too slow 👀" : "Again?! 😂",
-                botInteraction.clickCount === 1 ? "Try again..." : "Almost got me 👀"
+                botInteraction.clickCount === 1 ? "A little too slow 👀" : "Again?! 😂",
+                botInteraction.clickCount === 1 ? "Have another try..." : "You nearly had me 👀"
             );
             dodgeBot();
             return;
         }
 
-        setBotBubble("Okay okay 😂", "You caught me!");
+        setBotBubble("All right, all right 😂", "You caught me!");
         moveBotTo(botInteraction.originalPosition, openAiChat);
     });
 }
@@ -496,22 +620,22 @@ const rishabhKnowledge = {
         "Rishabh is a third-year B.Tech Computer Science & Engineering student at BBD NIIT, Lucknow. His B.Tech is from 2024 to 2028.",
 
     skills:
-        "Rishabh's technical skills include C++, Python, JavaScript, HTML and CSS. He also has hands-on exposure to AI tools.",
+        "Rishabh's technical skills include C++, Python, JavaScript, HTML and CSS. He also has practical experience with AI tools.",
 
     nexus:
-        "Rishabh is the Co-Founder and Tech Lead of NEXUS at BBDNIIT. He helped establish the club with an initial team of 7 active participants and leads technical initiatives and student-focused activities.",
+        "Rishabh is the Co-Founder and Tech Lead of NEXUS at BBDNIIT. He helped establish the club with an initial team of seven active participants and leads technical initiatives and student-focused activities.",
 
     hackathons:
-        "Rishabh has participated in Chandigarh University Hackathon, Odoo Hackathon and Smart India Hackathon. He was shortlisted in the offline round of Smart India Hackathon at BBDNIIT.",
+        "Rishabh has participated in the Chandigarh University Hackathon, Odoo Hackathon and Smart India Hackathon. He was shortlisted for the offline round of Smart India Hackathon at BBDNIIT.",
 
     coderush:
-        "Rishabh is an Organizer and Team Lead for Coderush, a college-level coding sprint and competition. He has helped organize it for two consecutive years and led a team of 7.",
+        "Rishabh is an Organizer and Team Lead for Coderush, a college-level coding sprint and competition. He has helped organise it for two consecutive years and led a team of seven.",
 
     contact:
-        "You can contact Rishabh at rishabhshukla9555@gmail.com or through his LinkedIn and GitHub profiles.",
+        "You can reach Rishabh at rishabhshukla9555@gmail.com or through his LinkedIn and GitHub profiles.",
 
     competencies:
-        "His core competencies include project coordination, team leadership, event management, planning and execution, communication, stakeholder coordination, problem solving and time management."
+        "His core competencies include project coordination, team leadership, event management, planning and execution, communication, stakeholder coordination, problem-solving and time management."
 
 };
 
@@ -528,7 +652,7 @@ function getBotReply(question){
         q.includes("city") ||
         q.includes("from")
     )
-        return `Rishabh is from <strong>Lucknow, Uttar Pradesh, India</strong>. 📍`;
+        return `Rishabh is based in <strong>Lucknow, Uttar Pradesh, India</strong>. 📍`;
 
     if(
         q.includes("education") ||
@@ -577,7 +701,7 @@ function getBotReply(question){
     )
         return rishabhKnowledge.competencies;
 
-    return `Hmm 👀 I don't have that information yet. Try asking me about Rishabh's <strong>skills, education, NEXUS, hackathons, Coderush, achievements or contact details.</strong>`;
+    return `I do not have that information yet. Try asking about Rishabh's <strong>skills, education, NEXUS, hackathons, Coderush, achievements or contact details.</strong>`;
 }
 
 
