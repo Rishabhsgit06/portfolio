@@ -183,13 +183,6 @@ if (menuBtn && navLinks) {
         navLinks.classList.toggle("active");
         menuBtn.classList.toggle("active");
     });
-
-    document.querySelectorAll(".nav-links a").forEach((link) => {
-        link.addEventListener("click", () => {
-            navLinks.classList.remove("active");
-            menuBtn.classList.remove("active");
-        });
-    });
 }
 
 // Elements used by the shared scroll-state handler.
@@ -199,6 +192,39 @@ const sections = document.querySelectorAll("section[id]");
 const navItems = document.querySelectorAll(".nav-links a");
 const heroOrbs = document.querySelectorAll(".hero .orb");
 const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const projectStack = document.querySelector(".project-stack");
+const projectCards = projectStack
+    ? Array.from(projectStack.querySelectorAll(".project"))
+    : [];
+
+function updateProjectStack() {
+    if (reduceMotion || !projectStack || projectCards.length < 2) return;
+
+    const stickyTop = projectCards[0].getBoundingClientRect().top;
+    const stackTop = Math.max(stickyTop, 88);
+
+    projectCards.forEach((card, index) => {
+        const nextCard = projectCards[index + 1];
+
+        if (!nextCard) {
+            card.style.setProperty("--stack-scale", "1");
+            card.style.setProperty("--stack-y", "0px");
+            card.style.setProperty("--stack-opacity", "1");
+            return;
+        }
+
+        const cardHeight = card.offsetHeight;
+        const nextTop = nextCard.getBoundingClientRect().top;
+        const progress = Math.min(
+            Math.max((stackTop + cardHeight * 0.18 - nextTop) / (cardHeight * 0.62), 0),
+            1
+        );
+
+        card.style.setProperty("--stack-scale", (1 - progress * 0.055).toFixed(3));
+        card.style.setProperty("--stack-y", `${-progress * 20}px`);
+        card.style.setProperty("--stack-opacity", (1 - progress * 0.2).toFixed(3));
+    });
+}
 
 // Keep scroll progress, navbar styling, and the active link in sync.
 function updateScrollState() {
@@ -241,6 +267,8 @@ function updateScrollState() {
             link.getAttribute("href") === `#${currentSection}`
         );
     });
+
+    updateProjectStack();
 }
 
 window.addEventListener("scroll", updateScrollState);
@@ -262,7 +290,7 @@ document.querySelectorAll(".hero .reveal").forEach((element) => {
     element.classList.add("active");
 });
 
-// Tilt project cards toward the pointer.
+// Tilt project cards toward the pointer without replacing scroll transforms.
 
 document.querySelectorAll(".project").forEach((card) => {
     card.addEventListener("mousemove", (e) => {
@@ -277,13 +305,13 @@ document.querySelectorAll(".project").forEach((card) => {
         const rotateX = ((y - centerY) / centerY) * -4;
         const rotateY = ((x - centerX) / centerX) * 4;
 
-        card.style.transform =
-            `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+        card.style.setProperty("--tilt-x", `${rotateX}deg`);
+        card.style.setProperty("--tilt-y", `${rotateY}deg`);
     });
 
     card.addEventListener("mouseleave", () => {
-        card.style.transform =
-            "perspective(1000px) rotateX(0) rotateY(0)";
+        card.style.setProperty("--tilt-x", "0deg");
+        card.style.setProperty("--tilt-y", "0deg");
     });
 });
 
@@ -299,6 +327,9 @@ document.querySelectorAll('a[href^="#"]').forEach((link) => {
 
         if (target) {
             e.preventDefault();
+
+            navLinks?.classList.remove("active");
+            menuBtn?.classList.remove("active");
 
             target.scrollIntoView({
                 behavior: "smooth",
@@ -479,7 +510,6 @@ function moveBotTo(target, onComplete){
     bot.style.top = `${target.top}px`;
 
     botInteraction.isMoving = true;
-    character.classList.remove("caught");
     character.classList.add("dodging");
 
     window.setTimeout(() => {
