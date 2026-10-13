@@ -192,39 +192,6 @@ const sections = document.querySelectorAll("section[id]");
 const navItems = document.querySelectorAll(".nav-links a");
 const heroOrbs = document.querySelectorAll(".hero .orb");
 const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-const projectStack = document.querySelector(".project-stack");
-const projectCards = projectStack
-    ? Array.from(projectStack.querySelectorAll(".project"))
-    : [];
-
-function updateProjectStack() {
-    if (reduceMotion || !projectStack || projectCards.length < 2) return;
-
-    const stickyTop = projectCards[0].getBoundingClientRect().top;
-    const stackTop = Math.max(stickyTop, 88);
-
-    projectCards.forEach((card, index) => {
-        const nextCard = projectCards[index + 1];
-
-        if (!nextCard) {
-            card.style.setProperty("--stack-scale", "1");
-            card.style.setProperty("--stack-y", "0px");
-            card.style.setProperty("--stack-opacity", "1");
-            return;
-        }
-
-        const cardHeight = card.offsetHeight;
-        const nextTop = nextCard.getBoundingClientRect().top;
-        const progress = Math.min(
-            Math.max((stackTop + cardHeight * 0.18 - nextTop) / (cardHeight * 0.62), 0),
-            1
-        );
-
-        card.style.setProperty("--stack-scale", (1 - progress * 0.055).toFixed(3));
-        card.style.setProperty("--stack-y", `${-progress * 20}px`);
-        card.style.setProperty("--stack-opacity", (1 - progress * 0.2).toFixed(3));
-    });
-}
 
 // Keep scroll progress, navbar styling, and the active link in sync.
 function updateScrollState() {
@@ -267,8 +234,6 @@ function updateScrollState() {
             link.getAttribute("href") === `#${currentSection}`
         );
     });
-
-    updateProjectStack();
 }
 
 window.addEventListener("scroll", updateScrollState);
@@ -429,6 +394,16 @@ const botInteraction = {
 
 const botMoveDuration = 900;
 
+function escapeHtml(value) {
+    return String(value).replace(/[&<>"']/g, (char) => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+    }[char]));
+}
+
 function setBotBubble(title, message){
     const bubble = document.querySelector(".ai-bubble");
 
@@ -436,8 +411,8 @@ function setBotBubble(title, message){
 
     bubble.innerHTML =
         '<span class="ai-dot"></span>' +
-        `<strong>${title}</strong>` +
-        `<small>${message}</small>`;
+        `<strong>${escapeHtml(title)}</strong>` +
+        `<small>${escapeHtml(message)}</small>`;
 
     bubble.classList.remove("dodge-message");
     void bubble.offsetWidth;
@@ -617,7 +592,7 @@ function addAiMessage(text, type){
         "ai-message " +
         (type === "user" ? "user-message" : "bot-message");
 
-    message.innerHTML = text;
+    message.innerHTML = escapeHtml(text);
 
     aiMessages.appendChild(message);
 

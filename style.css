@@ -1811,58 +1811,21 @@ button {
 }
 
 
-/* STACKED PROJECT CARDS */
+/* PROJECT LIST */
 
 .project-stack {
-    display: block;
-    min-height: 150vh;
+    display: grid;
+    gap: 32px;
     margin-top: 65px;
 }
 
 .project-stack .project {
-    position: sticky;
-    top: clamp(88px, 11vh, 130px);
+    position: relative;
     width: 100%;
-    margin-bottom: 14vh;
-    transform: translate3d(0, var(--stack-y, 0px), 0)
-        scale(var(--stack-scale, 1))
-        rotateX(var(--tilt-x, 0deg))
-        rotateY(var(--tilt-y, 0deg));
-    transform-origin: center top;
-    opacity: var(--stack-opacity, 1);
+    margin: 0;
     transition:
-        transform 0.18s ease-out,
-        opacity 0.18s ease-out,
         border-color 0.4s ease,
         box-shadow 0.4s ease;
-    will-change: transform, opacity;
-}
-
-.project-stack .project::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: 1;
-    border-radius: inherit;
-    background: linear-gradient(
-        115deg,
-        rgba(255, 255, 255, 0.1),
-        transparent 32%
-    );
-    pointer-events: none;
-}
-
-.project-stack .project > * {
-    position: relative;
-    z-index: 2;
-}
-
-.project-stack .project:first-child {
-    z-index: 1;
-}
-
-.project-stack .project:last-child {
-    z-index: 2;
 }
 
 
@@ -2324,18 +2287,6 @@ footer a:hover {
         filter: none;
     }
 
-    .project-stack {
-        min-height: 0;
-    }
-
-    .project-stack .project {
-        position: relative;
-        top: auto;
-        margin-bottom: 18px;
-        transform: none;
-        opacity: 1;
-        transition: none;
-    }
 }
 
 
@@ -2530,13 +2481,10 @@ footer a:hover {
     }
 
     .project-stack {
-        min-height: 125vh;
         margin-top: 48px;
     }
 
     .project-stack .project {
-        top: 82px;
-        margin-bottom: 10vh;
         border-radius: 18px;
     }
 
